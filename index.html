@@ -167,6 +167,8 @@
         background: rgba(255, 255, 255, 0.1);
         color: #fff;
         cursor: pointer;
+        white-space: nowrap;
+        min-width: 80px;
       }
       .quick-btn:hover {
         background: rgba(255, 255, 255, 0.25);
@@ -177,6 +179,7 @@
         /* 年份显示 */
         #year-display {
           font-size: 100px;
+          top: 35%; /* 上移位置 */
         }
         /* 漂浮文字 */
         .floating-wish {
@@ -187,10 +190,15 @@
           bottom: 150px;
           max-width: 90%;
           gap: 8px;
+          flex-direction: row;
+          flex-wrap: nowrap;
+          overflow-x: auto;
+          padding: 10px 0;
         }
         .quick-btn {
           padding: 8px 16px;
           font-size: 12px;
+          white-space: nowrap;
         }
         /* 输入框和按钮 */
         #wish-input {
@@ -208,6 +216,7 @@
         /* 年份显示 */
         #year-display {
           font-size: 70px;
+          top: 30%; /* 在小屏幕上进一步上移 */
         }
         /* 漂浮文字 */
         .floating-wish {
@@ -234,10 +243,17 @@
         /* 快速祝福按钮区域 */
         #quick-wishes {
           bottom: 200px;
+          max-width: 90%;
+          gap: 8px;
+          flex-direction: row;
+          flex-wrap: nowrap;
+          overflow-x: auto;
+          padding: 10px 0;
         }
         .quick-btn {
           padding: 6px 14px;
           font-size: 11px;
+          white-space: nowrap;
         }
       }
     </style>
@@ -427,6 +443,10 @@
           this.y += this.vy;
           this.vy += 0.12;
 
+          // 添加边界检查，确保火箭不会超出屏幕范围
+          this.x = Math.max(0, Math.min(this.x, W));
+          this.y = Math.max(0, Math.min(this.y, H));
+
           if (this.vy >= 0 || this.y <= this.targetY) {
             this.explode();
             this.dead = true;
@@ -481,6 +501,10 @@
           this.x += this.vx;
           this.y += this.vy;
           this.alpha -= this.decay;
+
+          // 添加边界检查，确保粒子不会超出屏幕范围
+          this.x = Math.max(0, Math.min(this.x, W));
+          this.y = Math.max(0, Math.min(this.y, H));
         };
 
         Particle.prototype.draw = function () {
@@ -592,11 +616,31 @@
           launch();
           launch();
 
-          var x = 10 + Math.random() * 60;
-          var y = 15 + Math.random() * 35;
           var color = wishColors[Math.floor(Math.random() * wishColors.length)];
           var rotation = (Math.random() - 0.5) * 30;
           var size = 28 + Math.random() * 16;
+
+          // 创建一个临时元素来测量文字宽度
+          var tempWish = $('<div class="floating-wish">')
+            .text(text)
+            .css({
+              fontSize: size + "px",
+              transform: "rotate(" + rotation + "deg)",
+              position: "absolute",
+              visibility: "hidden",
+            });
+          $("body").append(tempWish);
+
+          // 获取文字的实际宽度和高度
+          var wishWidth = tempWish.outerWidth();
+          var wishHeight = tempWish.outerHeight();
+          tempWish.remove();
+
+          // 计算安全的x和y位置，确保文字不会超出屏幕
+          var maxX = 100 - (wishWidth / W) * 100 - 2; // 减去2%的边距
+          var maxY = 100 - (wishHeight / H) * 100 - 2; // 减去2%的边距
+          var x = Math.max(2, Math.min(20 + Math.random() * 60, maxX)); // 确保在安全范围内
+          var y = Math.max(2, Math.min(20 + Math.random() * 40, maxY)); // 确保在安全范围内
 
           var $wish = $('<div class="floating-wish">')
             .text(text)
