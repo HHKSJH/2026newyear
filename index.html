@@ -191,14 +191,17 @@
           max-width: 90%;
           gap: 8px;
           flex-direction: row;
-          flex-wrap: nowrap;
-          overflow-x: auto;
+          flex-wrap: wrap;
+          justify-content: center;
           padding: 10px 0;
         }
         .quick-btn {
-          padding: 8px 16px;
+          padding: 8px 12px;
           font-size: 12px;
           white-space: nowrap;
+          width: calc(25% - 8px);
+          box-sizing: border-box;
+          text-align: center;
         }
         /* 输入框和按钮 */
         #wish-input {
@@ -244,16 +247,19 @@
         #quick-wishes {
           bottom: 200px;
           max-width: 90%;
-          gap: 8px;
+          gap: 6px;
           flex-direction: row;
-          flex-wrap: nowrap;
-          overflow-x: auto;
+          flex-wrap: wrap;
+          justify-content: center;
           padding: 10px 0;
         }
         .quick-btn {
-          padding: 6px 14px;
+          padding: 6px 8px;
           font-size: 11px;
           white-space: nowrap;
+          width: calc(25% - 6px);
+          box-sizing: border-box;
+          text-align: center;
         }
       }
     </style>
