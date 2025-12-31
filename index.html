@@ -2,7 +2,10 @@
 <html lang="zh-CN">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1.0, minimum-scale=1.0"
+    />
     <title>2026 新年快乐 - 烟花祝福</title>
     <script src="./js/jquery.js"></script>
     <style>
@@ -98,6 +101,13 @@
       #send-btn:hover {
         transform: scale(1.05);
       }
+      /* 触摸反馈 */
+      #send-btn:active,
+      .quick-btn:active,
+      #sound-btn:active {
+        transform: scale(0.95);
+        opacity: 0.8;
+      }
       #sound-btn {
         position: fixed;
         top: 20px;
@@ -161,6 +171,75 @@
       .quick-btn:hover {
         background: rgba(255, 255, 255, 0.25);
       }
+
+      /* 移动端适配 */
+      @media (max-width: 768px) {
+        /* 年份显示 */
+        #year-display {
+          font-size: 100px;
+        }
+        /* 漂浮文字 */
+        .floating-wish {
+          font-size: 24px;
+        }
+        /* 快速祝福按钮区域 */
+        #quick-wishes {
+          bottom: 150px;
+          max-width: 90%;
+          gap: 8px;
+        }
+        .quick-btn {
+          padding: 8px 16px;
+          font-size: 12px;
+        }
+        /* 输入框和按钮 */
+        #wish-input {
+          width: 250px;
+          padding: 12px 20px;
+          font-size: 16px;
+        }
+        #send-btn {
+          padding: 12px 30px;
+          font-size: 16px;
+        }
+      }
+
+      @media (max-width: 480px) {
+        /* 年份显示 */
+        #year-display {
+          font-size: 70px;
+        }
+        /* 漂浮文字 */
+        .floating-wish {
+          font-size: 20px;
+        }
+        /* 输入面板 */
+        #input-panel {
+          flex-direction: column;
+          align-items: center;
+          width: 90%;
+          gap: 10px;
+        }
+        /* 输入框和按钮 */
+        #wish-input {
+          width: 100%;
+          padding: 15px 20px;
+          font-size: 16px;
+        }
+        #send-btn {
+          width: 100%;
+          padding: 15px 25px;
+          font-size: 16px;
+        }
+        /* 快速祝福按钮区域 */
+        #quick-wishes {
+          bottom: 200px;
+        }
+        .quick-btn {
+          padding: 6px 14px;
+          font-size: 11px;
+        }
+      }
     </style>
   </head>
   <body>
@@ -196,7 +275,8 @@
         var W, H;
         var particles = [];
         var rockets = [];
-        var MAX_PARTICLES = 800;
+        // 根据屏幕大小动态调整最大粒子数量
+        var MAX_PARTICLES = window.innerWidth > 768 ? 800 : 400;
 
         // ========== 音效系统 ==========
         var audioCtx = null;
@@ -306,6 +386,8 @@
         function resize() {
           W = canvas.width = window.innerWidth;
           H = canvas.height = window.innerHeight;
+          // 根据屏幕大小动态调整最大粒子数量
+          MAX_PARTICLES = W > 768 ? 800 : 400;
         }
         resize();
         $(window).resize(resize);
@@ -478,6 +560,16 @@
           launch(e.clientX);
           launch(e.clientX + 50);
           launch(e.clientX - 50);
+        });
+
+        // 触摸发射（移动端支持）
+        $(canvas).on("touchstart", function (e) {
+          e.preventDefault();
+          var touch = e.touches[0];
+          var x = touch.clientX;
+          launch(x);
+          launch(x + 50);
+          launch(x - 50);
         });
 
         // ========== 祝福文字系统 ==========
